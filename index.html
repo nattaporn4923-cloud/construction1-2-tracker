@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ระบบติดตามความก้าวหน้างานก่อสร้าง ศบ.6 อุบลราชธานี</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font (Inter & Sarabun) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PptxGenJS for PowerPoint Export -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Sarabun', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-full flex flex-col antialiased text-gray-800">
+
+    <!-- LOGIN / SUPERVISOR SELECTION MODAL -->
+    <div id="loginModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 overflow-hidden transform transition-all">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner">
+                    <i class="fa-solid fa-helmet-safety text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900">ระบบรายงานหน้างานก่อสร้าง</h2>
+                <p class="text-sm text-gray-500 mt-1">ศูนย์บริการวิชาการที่ 6 (จังหวัดอุบลราชธานี)</p>
+                <div class="mt-3 inline-block bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-medium">
+                    สัญญาเลขที่ 183/2569 (ลงวันที่ 21 ตุลาคม 2569)
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">กรุณาเลือกผู้ใช้งานเพื่อเข้าสู่ระบบ:</label>
+                
+                <button onclick="selectSupervisor('นายสมโชค สมวงค์', 'supervisor')" class="w-full text-left p-3.5 rounded-xl border-2 border-gray-100 hover:border-brand-500 hover:bg-brand-50/50 transition flex items-center group">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-base mr-3 group-hover:bg-brand-600 group-hover:text-white transition">
+                        ส
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-900 text-sm">นายสมโชค สมวงค์</div>
+                        <div class="text-xs text-gray-500">ผู้ควบคุมงานฝ่ายผู้รับจ้าง</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right ml-auto text-gray-300 group-hover:text-brand-600 text-xs"></i>
+                </button>
+
+                <button onclick="selectSupervisor('นายเกียรติศักดิ์ ศรีทับทิม', 'supervisor')" class="w-full text-left p-3.5 rounded-xl border-2 border-gray-100 hover:border-brand-500 hover:bg-brand-50/50 transition flex items-center group">
+                    <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-base mr-3 group-hover:bg-brand-600 group-hover:text-white transition">
+                        ก
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-900 text-sm">นายเกียรติศักดิ์ ศรีทับทิม</div>
+                        <div class="text-xs text-gray-500">ผู้ช่วยควบคุมงานฝ่ายผู้รับจ้าง</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right ml-auto text-gray-300 group-hover:text-brand-600 text-xs"></i>
+                </button>
+
+                <button onclick="selectSupervisor('เจ้าของแอป / หัวหน้าศูนย์', 'owner')" class="w-full text-left p-3.5 rounded-xl border-2 border-amber-200 bg-amber-50/30 hover:border-amber-500 hover:bg-amber-50 transition flex items-center group">
+                    <div class="w-10 h-10 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center font-bold text-base mr-3 group-hover:bg-amber-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-crown text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-900 text-sm">เจ้าของแอป / หัวหน้าศูนย์</div>
+                        <div class="text-xs text-amber-700">มีสิทธิ์ตรวจรับพัสดุและจัดการงวดงาน</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right ml-auto text-amber-400 group-hover:text-amber-600 text-xs"></i>
+                </button>
+            </div>
+
+            <div class="mt-5 text-center text-xs text-gray-400">
+                งบประมาณโครงการ 490,000 บาท | ระยะเวลา 120 วัน
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="appContainer" class="flex flex-col h-full hidden">
+        
+        <!-- HEADER -->
+        <header class="bg-brand-800 text-white shadow-lg sticky top-0 z-30">
+            <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                        <i class="fa-solid fa-building-shield text-brand-300 text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-sm sm:text-base leading-tight">บ้านพักข้าราชการ ศบ.6 อุบลฯ</h1>
+                        <p class="text-xs text-brand-200" id="currentSupervisorDisplay">ผู้ควบคุมงาน: -</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="switchUser()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition border border-white/20">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> เปลี่ยนผู้ใช้
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- SUB-NAV TABS -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-[61px] z-20">
+            <div class="max-w-4xl mx-auto px-2 flex overflow-x-auto hide-scrollbar">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="tab-btn flex items-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 border-brand-600 text-brand-600 whitespace-nowrap">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>ภาพรวม & งวดงาน</span>
+                </button>
+                <button onclick="switchTab('report')" id="nav-report" class="tab-btn flex items-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>บันทึกรายงานประจำวัน</span>
+                </button>
+                <button onclick="switchTab('summary')" id="nav-summary" class="tab-btn flex items-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>สรุปรายสัปดาห์/เดือน</span>
+                </button>
+                <button onclick="switchTab('history')" id="nav-history" class="tab-btn flex items-center space-x-2 py-3 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                    <span>ประวัติ & ส่งออกไฟล์</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto max-w-4xl w-full mx-auto p-4 sm:p-6 pb-24">
+            
+            <!-- TAB 1: DASHBOARD & PHASES -->
+            <section id="tab-content-dashboard" class="space-y-6">
+                <!-- Project Info Card -->
+                <div class="bg-gradient-to-br from-brand-700 to-brand-900 text-white rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 opacity-10 text-9xl">
+                        <i class="fa-solid fa-house-chimney"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="bg-white/20 text-white text-xs px-2.5 py-1 rounded-full font-medium">สัญญาเลขที่ 183/2569 (ลงวันที่ 21 ต.ค. 2569)</span>
+                        <h2 class="text-xl sm:text-2xl font-bold mt-2">งานจ้างปรับปรุงบ้านพักข้าราชการ ระดับ 1-2</h2>
+                        <p class="text-xs sm:text-sm text-brand-100 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> ศูนย์บริการวิชาการที่ 6 (จังหวัดอุบลราชธานี) ตำบลสำโรง อำเภอสำโรง</p>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-white/10">
+                            <div>
+                                <div class="text-xs text-brand-200">งบประมาณกลาง</div>
+                                <div class="text-base sm:text-lg font-bold">490,000 บาท</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-brand-200">ระยะเวลาสัญญา</div>
+                                <div class="text-base sm:text-lg font-bold">120 วัน</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-brand-200">ผู้รับจ้าง</div>
+                                <div class="text-sm font-bold truncate">หจก. อุบล นวภัทร</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-brand-200">ความก้าวหน้าสะสม</div>
+                                <div class="text-base sm:text-lg font-bold text-emerald-300" id="dashOverallPercent">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Phases & Countdown -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-gray-900 text-base"><i class="fa-solid fa-list-check text-brand-600 mr-2"></i>แผนการดำเนินงาน 4 งวดงาน</h3>
+                        <span class="text-xs text-gray-500" id="phaseCompletedCount">เสร็จสิ้น 0 / 4 งวด</span>
+                    </div>
+
+                    <!-- Phase 1 -->
+                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-md font-bold">งวดที่ 1 (35% ของค่าจ้าง)</span>
+                                <h4 class="font-bold text-sm text-gray-900 mt-1">งานเตรียมการ รื้อถอน และหลังคา</h4>
+                            </div>
+                            <div class="text-left sm:text-right">
+                                <div class="text-xs text-gray-500">กำหนดเสร็จ: 20 พฤศจิกายน 2569</div>
+                                <div class="text-xs font-bold text-brand-700" id="p1-countdown">คำนวณเวลา...</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-600 bg-white p-3 rounded-lg border border-gray-100 space-y-1">
+                            <div class="font-semibold text-gray-700 mb-1">รายการงานย่อย:</div>
+                            <ul class="list-disc list-inside space-y-0.5 text-gray-600">
+                                <li>ขนย้ายเครื่องมือและเครื่องจักรที่ใช้ในการซ่อมแซมเข้าพื้นที่</li>
+                                <li>รื้อถอนฝ้า, รื้อถอนกระเบื้องพื้น, รื้อถอนกระเบื้องผนัง และขนเศษวัสดุไปทิ้ง</li>
+                                <li>ทำงานรื้อถอนกระเบื้องหลังคาเดิม และติดตั้งกระเบื้องหลังคาของใหม่จนแล้วเสร็จ</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-gray-200">
+                            <!-- Inspection Status Checkbox (Owner Only) -->
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="inspect-p1" onchange="toggleInspection(0)" class="w-4 h-4 text-amber-600 rounded border-gray-300">
+                                <label for="inspect-p1" class="text-xs font-semibold text-gray-700 cursor-pointer">ตรวจรับพัสดุแล้ว (เฉพาะเจ้าของแอป)</label>
+                            </div>
+                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                                <span class="font-medium text-xs text-gray-500" id="p1-status-text">สถานะ: รอดำเนินการ</span>
+                                <button onclick="togglePhaseComplete(0)" id="p1-btn" class="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-brand-600 hover:text-white transition text-xs">เสร็จงวดนี้</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2 -->
+                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-md font-bold">งวดที่ 2 (25% ของค่าจ้าง)</span>
+                                <h4 class="font-bold text-sm text-gray-900 mt-1">งานระบบประปา-ไฟฟ้า และตกแต่งผิว</h4>
+                            </div>
+                            <div class="text-left sm:text-right">
+                                <div class="text-xs text-gray-500">กำหนดเสร็จ: ภายใน 60 วัน</div>
+                                <div class="text-xs font-bold text-brand-700">ครบกำหนด ธ.ค. 2569</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-600 bg-white p-3 rounded-lg border border-gray-100 space-y-1">
+                            <div class="font-semibold text-gray-700 mb-1">รายการงานย่อย:</div>
+                            <ul class="list-disc list-inside space-y-0.5 text-gray-600">
+                                <li>เดินท่อประปาจนแล้วเสร็จ / เดินท่อระบบไฟฟ้าจนแล้วเสร็จ</li>
+                                <li>ทำงานตกแต่งผิวพื้น และทำงานตกแต่งผนังจนแล้วเสร็จ</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-gray-200">
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="inspect-p2" onchange="toggleInspection(1)" class="w-4 h-4 text-amber-600 rounded border-gray-300">
+                                <label for="inspect-p2" class="text-xs font-semibold text-gray-700 cursor-pointer">ตรวจรับพัสดุแล้ว (เฉพาะเจ้าของแอป)</label>
+                            </div>
+                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                                <span class="font-medium text-xs text-gray-500" id="p2-status-text">สถานะ: รอดำเนินการ</span>
+                                <button onclick="togglePhaseComplete(1)" id="p2-btn" class="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-brand-600 hover:text-white transition text-xs">เสร็จงวดนี้</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3 -->
+                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-0.5 rounded-md font-bold">งวดที่ 3 (20% ของค่าจ้าง)</span>
+                                <h4 class="font-bold text-sm text-gray-900 mt-1">งานประตู หน้าต่าง สุขภัณฑ์ และทาสี</h4>
+                            </div>
+                            <div class="text-left sm:text-right">
+                                <div class="text-xs text-gray-500">กำหนดเสร็จ: ภายใน 90 วัน</div>
+                                <div class="text-xs font-bold text-brand-700">ครบกำหนด ม.ค. 2570</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-600 bg-white p-3 rounded-lg border border-gray-100 space-y-1">
+                            <div class="font-semibold text-gray-700 mb-1">รายการงานย่อย:</div>
+                            <ul class="list-disc list-inside space-y-0.5 text-gray-600">
+                                <li>ทำการติดตั้งประตู หน้าต่าง จนเสร็จสมบูรณ์</li>
+                                <li>ติดตั้งเครื่องสุขภัณฑ์ อุปกรณ์ประกอบห้องน้ำ-ห้องส้วม จนเสร็จสมบูรณ์</li>
+                                <li>ทาสีผนัง ทั้งภายในและภายนอก จนเสร็จสมบูรณ์</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-gray-200">
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="inspect-p3" onchange="toggleInspection(2)" class="w-4 h-4 text-amber-600 rounded border-gray-300">
+                                <label for="inspect-p3" class="text-xs font-semibold text-gray-700 cursor-pointer">ตรวจรับพัสดุแล้ว (เฉพาะเจ้าของแอป)</label>
+                            </div>
+                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                                <span class="font-medium text-xs text-gray-500" id="p3-status-text">สถานะ: รอดำเนินการ</span>
+                                <button onclick="togglePhaseComplete(2)" id="p3-btn" class="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-brand-600 hover:text-white transition text-xs">เสร็จงวดนี้</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 4 -->
+                    <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-0.5 rounded-md font-bold">งวดที่ 4 (20% ของค่าจ้าง)</span>
+                                <h4 class="font-bold text-sm text-gray-900 mt-1">งานฝ้าเพดาน ระบบไฟฟ้า ทดสอบ และส่งมอบ</h4>
+                            </div>
+                            <div class="text-left sm:text-right">
+                                <div class="text-xs text-gray-500">กำหนดเสร็จ: ภายใน 120 วัน</div>
+                                <div class="text-xs font-bold text-brand-700">ครบกำหนด ก.พ. 2570</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-600 bg-white p-3 rounded-lg border border-gray-100 space-y-1">
+                            <div class="font-semibold text-gray-700 mb-1">รายการงานย่อย:</div>
+                            <ul class="list-disc list-inside space-y-0.5 text-gray-600">
+                                <li>ทำการติดตั้งงานฝ้าเพดาน และอุปกรณ์ไฟฟ้า จนเสร็จสมบูรณ์</li>
+                                <li>ทาสีตกแต่งส่วนต่าง ๆ ทั้งภายในและภายนอกจนแล้วเสร็จ</li>
+                                <li>ทดสอบระบบไฟฟ้า ประปา สุขาภิบาล และทำความสะอาดส่งมอบงานทั้งหมด</li>
+                            </ul>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2 border-t border-gray-200">
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="inspect-p4" onchange="toggleInspection(3)" class="w-4 h-4 text-amber-600 rounded border-gray-300">
+                                <label for="inspect-p4" class="text-xs font-semibold text-gray-700 cursor-pointer">ตรวจรับพัสดุแล้ว (เฉพาะเจ้าของแอป)</label>
+                            </div>
+                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                                <span class="font-medium text-xs text-gray-500" id="p4-status-text">สถานะ: รอดำเนินการ</span>
+                                <button onclick="togglePhaseComplete(3)" id="p4-btn" class="px-3 py-1.5 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-brand-600 hover:text-white transition text-xs">เสร็จงวดนี้</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- TAB 2: DAILY REPORT FORM -->
+            <section id="tab-content-report" class="space-y-6 hidden">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-1"><i class="fa-solid fa-pen-to-square text-brand-600 mr-2"></i>บันทึกรายงานความคืบหน้าประจำวัน (Daily Report)</h2>
+                    <p class="text-xs text-gray-500 mb-5">บันทึกผลการปฏิบัติงานหน้างาน ระบบจะนำไปสรุปรายสัปดาห์และรายเดือนให้อัตโนมัติ</p>
+
+                    <form id="reportForm" onsubmit="handleReportSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">วันที่ปฏิบัติงาน</label>
+                                <input type="date" id="reportDate" required class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">งวดงานหลัก</label>
+                                <select id="reportPhase" onchange="updateDynamicSubtasks()" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50">
+                                    <option value="งวดที่ 1: งานเตรียมการ รื้อถอน และหลังคา">งวดที่ 1: งานเตรียมการ รื้อถอน และหลังคา</option>
+                                    <option value="งวดที่ 2: งานระบบประปา-ไฟฟ้า และตกแต่งผิว">งวดที่ 2: งานระบบประปา-ไฟฟ้า และตกแต่งผิว</option>
+                                    <option value="งวดที่ 3: งานประตู หน้าต่าง สุขภัณฑ์ และทาสี">งวดที่ 3: งานประตู หน้าต่าง สุขภัณฑ์ และทาสี</option>
+                                    <option value="งวดที่ 4: งานฝ้าเพดาน ระบบไฟฟ้า ทดสอบ และส่งมอบ">งวดที่ 4: งานฝ้าเพดาน ระบบไฟฟ้า ทดสอบ และส่งมอบ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Sub-tasks Checkboxes Based on Selected Phase -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-2">หมวดหมู่งานย่อยที่ทำเสร็จในวันนี้ (ตามงวดงานที่เลือก)</label>
+                            <div id="dynamicSubtasksContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">รายละเอียดผลการปฏิบัติงานวันนี้</label>
+                            <textarea id="reportSummary" rows="3" required placeholder="ระบุรายละเอียดเพิ่มเติม..." class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">ปัญหา / อุปสรรค (ถ้ามี)</label>
+                                <textarea id="reportIssues" rows="2" placeholder="- ปกติ ไม่มีอุปสรรค -" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50">- ปกติ ไม่มีอุปสรรค -</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-700 mb-1">แผนงานวันถัดไป</label>
+                                <textarea id="reportNextPlan" rows="2" placeholder="ระบุแผนงาน..." class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 bg-gray-50"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Image Upload Section -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">อัพโหลดรูปภาพหน้างาน</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl bg-gray-50 hover:bg-gray-100 transition cursor-pointer relative" onclick="document.getElementById('imageInput').click()">
+                                <div class="space-y-1 text-center">
+                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                                    <div class="text-xs text-gray-600">
+                                        <span class="font-medium text-brand-600 hover:text-brand-500">คลิกเพื่ออัพโหลดรูปภาพ</span> หรือลากไฟล์มาวาง
+                                    </div>
+                                    <p class="text-[10px] text-gray-400">PNG, JPG สูงสุด 5MB</p>
+                                </div>
+                                <input id="imageInput" type="file" accept="image/*" class="sr-only" onchange="previewImage(event)">
+                            </div>
+                            <div id="imagePreviewContainer" class="mt-3 hidden relative">
+                                <img id="imagePreview" class="w-full h-48 object-cover rounded-xl border border-gray-200" src="" alt="Preview">
+                                <button type="button" onclick="removeImage()" class="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1.5 w-8 h-8 flex items-center justify-center text-xs shadow-md hover:bg-red-700 transition">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-brand-500/30 transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>บันทึกรายงานประจำวัน</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- TAB 3: AUTO-GENERATED WEEKLY & MONTHLY SUMMARY -->
+            <section id="tab-content-summary" class="space-y-6 hidden">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-200">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-900"><i class="fa-solid fa-chart-line text-brand-600 mr-2"></i>รายงานสรุปอัตโนมัติ (Weekly & Monthly)</h2>
+                            <p class="text-xs text-gray-500">ระบบรวบรวมและสังเคราะห์ข้อมูลจากรายงานประจำวันที่บันทึกไว้โดยอัตโนมัติ</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="renderAutoSummary()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center space-x-1">
+                                <i class="fa-solid fa-rotate"></i>
+                                <span>รีเฟรชข้อมูล</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Summary Box -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-emerald-900 text-base"><i class="fa-solid fa-calendar-week mr-2"></i>สรุปรายงานประจำสัปดาห์ (Weekly Summary)</h3>
+                            <span class="text-xs bg-emerald-200 text-emerald-800 px-2.5 py-1 rounded-full font-bold">อัตโนมัติ</span>
+                        </div>
+                        <div id="weeklySummaryContent" class="text-xs sm:text-sm text-emerald-950 space-y-2 bg-white/80 p-4 rounded-xl border border-emerald-100">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Monthly Summary Box -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-blue-900 text-base"><i class="fa-solid fa-calendar-days mr-2"></i>สรุปรายงานประจำเดือน (Monthly Summary)</h3>
+                            <span class="text-xs bg-blue-200 text-blue-800 px-2.5 py-1 rounded-full font-bold">อัตโนมัติ</span>
+                        </div>
+                        <div id="monthlySummaryContent" class="text-xs sm:text-sm text-blue-950 space-y-2 bg-white/80 p-4 rounded-xl border border-blue-100">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: HISTORY & EXPORT (EXCEL & POWERPOINT) -->
+            <section id="tab-content-history" class="space-y-6 hidden">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-900"><i class="fa-solid fa-file-arrow-down text-brand-600 mr-2"></i>ประวัติรายงานประจำวัน & ส่งออกไฟล์</h2>
+                            <p class="text-xs text-gray-500">ส่งออกข้อมูลเป็น Excel หรือสร้างสไลด์รายงาน PowerPoint สวยงามพร้อมนำเสนอ</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5">
+                                <i class="fa-solid fa-file-excel"></i>
+                                <span>Export Excel</span>
+                            </button>
+                            <button onclick="exportToPowerPoint()" class="bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow transition flex items-center space-x-1.5">
+                                <i class="fa-solid fa-file-powerpoint"></i>
+                                <span>Export PowerPoint</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="historyList" class="space-y-4">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER STATUS BAR -->
+        <footer class="bg-white border-t border-gray-200 py-3 px-4 fixed bottom-0 left-0 right-0 z-30 shadow-lg">
+            <div class="max-w-4xl mx-auto flex justify-between items-center text-xs text-gray-500">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="footerUserStatus" class="font-medium text-gray-700">ผู้ควบคุมงาน: -</span>
+                </div>
+                <div>
+                    <span>สัญญาเลขที่ 183/2569 © 2569</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-sm">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage">บันทึกข้อมูลสำเร็จ</span>
+    </div>
+
+    <!-- APP LOGIC -->
+    <script>
+        let currentSupervisor = null;
+        let currentUserRole = 'supervisor'; // 'supervisor' or 'owner'
+        let uploadedImageBase64 = null;
+
+        // Phase statuses & Inspection statuses
+        let phaseStatuses = [false, false, false, false];
+        let inspectionStatuses = [false, false, false, false];
+
+        // Subtasks dictionary per phase
+        const phaseSubtasksMap = {
+            "งวดที่ 1: งานเตรียมการ รื้อถอน และหลังคา": [
+                "ขนย้ายเครื่องมือและเครื่องจักรเข้าพื้นที่",
+                "รื้อถอนฝ้าเพดาน",
+                "รื้อถอนกระเบื้องพื้น",
+                "รื้อถอนกระเบื้องผนัง",
+                "ขนส่งเศษวัสดุไปทิ้ง",
+                "งานรื้อถอนกระเบื้องหลังคาเดิมและติดตั้งของใหม่"
+            ],
+            "งวดที่ 2: งานระบบประปา-ไฟฟ้า และตกแต่งผิว": [
+                "เดินท่อประปาจนแล้วเสร็จ",
+                "เดินท่อระบบไฟฟ้าจนแล้วเสร็จ",
+                "ทำงานตกแต่งผิวพื้นจนแล้วเสร็จ",
+                "ทำงานตกแต่งผนังจนแล้วเสร็จ"
+            ],
+            "งวดที่ 3: งานประตู หน้าต่าง สุขภัณฑ์ และทาสี": [
+                "ทำการติดตั้งประตู หน้าต่าง จนเสร็จสมบูรณ์",
+                "ติดตั้งเครื่องสุขภัณฑ์ อุปกรณ์ห้องน้ำ-ห้องส้วม",
+                "ทาสีผนังทั้งภายในและภายนอกจนเสร็จสมบูรณ์"
+            ],
+            "งวดที่ 4: งานฝ้าเพดาน ระบบไฟฟ้า ทดสอบ และส่งมอบ": [
+                "ทำการติดตั้งงานฝ้าเพดานและอุปกรณ์ไฟฟ้า",
+                "ทาสีตกแต่งส่วนต่างๆ ทั้งภายในและภายนอก",
+                "ทดสอบระบบไฟฟ้า ประปา สุขาภิบาล",
+                "ปรับเกลี่ย ทำความสะอาด และส่งมอบงาน"
+            ]
+        };
+
+        // Reports History Data
+        let dailyReports = [
+            {
+                id: 1,
+                date: "2026-10-22",
+                supervisor: "นายสมโชค สมวงค์",
+                phase: "งวดที่ 1: งานเตรียมการ รื้อถอน และหลังคา",
+                subtasks: ["ขนย้ายเครื่องมือและเครื่องจักรเข้าพื้นที่", "รื้อถอนฝ้าเพดาน"],
+                summary: "เข้าตรวจสอบพื้นที่หน้างาน นำเครื่องมือเครื่องจักรเข้าไซต์งาน และเริ่มดำเนินการรื้อถอนฝ้าเพดานบริเวณชั้นล่าง",
+                issues: "- ปกติ ไม่มีอุปสรรค -",
+                nextPlan: "ดำเนินการรื้อถอนกระเบื้องพื้นและกระเบื้องผนังต่อ",
+                image: null
+            }
+        ];
+
+        window.onload = function() {
+            const savedReports = localStorage.getItem('kb_daily_reports_v3');
+            if (savedReports) {
+                try { dailyReports = JSON.parse(savedReports); } catch(e) {}
+            }
+            const savedPhases = localStorage.getItem('kb_phase_statuses_v3');
+            if (savedPhases) {
+                try { phaseStatuses = JSON.parse(savedPhases); } catch(e) {}
+            }
+            const savedInspections = localStorage.getItem('kb_inspection_statuses_v3');
+            if (savedInspections) {
+                try { inspectionStatuses = JSON.parse(savedInspections); } catch(e) {}
+            }
+
+            document.getElementById('reportDate').valueAsDate = new Date();
+            updateCountdowns();
+            renderDashboardPhases();
+            updateDynamicSubtasks();
+            renderHistory();
+            renderAutoSummary();
+        };
+
+        function updateCountdowns() {
+            const deadlineP1 = new Date('2026-11-20T23:59:59');
+            const now = new Date();
+            const diffTime = deadlineP1 - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            const countdownEl = document.getElementById('p1-countdown');
+            if (diffDays > 0) {
+                countdownEl.innerText = `เหลือเวลาอีก ${diffDays} วัน`;
+                countdownEl.className = "text-xs font-bold text-emerald-600";
+            } else if (diffDays === 0) {
+                countdownEl.innerText = `ครบกำหนดวันนี้!`;
+                countdownEl.className = "text-xs font-bold text-orange-600";
+            } else {
+                countdownEl.innerText = `เกินกำหนด ${Math.abs(diffDays)} วัน`;
+                countdownEl.className = "text-xs font-bold text-red-600";
+            }
+        }
+
+        function selectSupervisor(name, role) {
+            currentSupervisor = name;
+            currentUserRole = role;
+            document.getElementById('currentSupervisorDisplay').innerText = `ผู้ใช้: ${name}`;
+            document.getElementById('footerUserStatus').innerText = `ผู้ใช้: ${name} (${role === 'owner' ? 'เจ้าของแอป' : 'ผู้ควบคุมงาน'})`;
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            
+            renderDashboardPhases();
+            showToast(`ยินดีต้อนรับ ${name}`, 'success');
+        }
+
+        function switchUser() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('appContainer').classList.add('hidden');
+        }
+
+        function switchTab(tabId) {
+            ['dashboard', 'report', 'summary', 'history'].forEach(id => {
+                document.getElementById(`tab-content-${id}`).classList.add('hidden');
+                document.getElementById(`nav-${id}`).classList.remove('border-brand-600', 'text-brand-600');
+                document.getElementById(`nav-${id}`).classList.add('border-transparent', 'text-gray-500');
+            });
+            document.getElementById(`tab-content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabId}`).classList.remove('border-transparent', 'text-gray-500');
+            document.getElementById(`nav-${tabId}`).classList.add('border-brand-600', 'text-brand-600');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tabId === 'summary') {
+                renderAutoSummary();
+            }
+        }
+
+        function updateDynamicSubtasks() {
+            const selectedPhase = document.getElementById('reportPhase').value;
+            const container = document.getElementById('dynamicSubtasksContainer');
+            const subtasks = phaseSubtasksMap[selectedPhase] || [];
+
+            container.innerHTML = subtasks.map(st => `
+                <label class="flex items-center space-x-2 text-xs text-gray-700 cursor-pointer p-1">
+                    <input type="checkbox" name="subtask" value="${st}" class="w-4 h-4 text-brand-600 rounded">
+                    <span>${st}</span>
+                </label>
+            `).join('');
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    document.getElementById('imagePreview').src = uploadedImageBase64;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            uploadedImageBase64 = null;
+            document.getElementById('imageInput').value = '';
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+            document.getElementById('imagePreview').src = '';
+        }
+
+        function togglePhaseComplete(index) {
+            phaseStatuses[index] = !phaseStatuses[index];
+            localStorage.setItem('kb_phase_statuses_v3', JSON.stringify(phaseStatuses));
+            renderDashboardPhases();
+            showToast('อัพเดตสถานะงวดงานเรียบร้อย', 'success');
+        }
+
+        function toggleInspection(index) {
+            if (currentUserRole !== 'owner') {
+                showToast('เฉพาะเจ้าของแอปเท่านั้นที่สามารถคลิกตรวจรับพัสดุได้', 'error');
+                document.getElementById(`inspect-p${index+1}`).checked = inspectionStatuses[index];
+                return;
+            }
+            inspectionStatuses[index] = document.getElementById(`inspect-p${index+1}`).checked;
+            localStorage.setItem('kb_inspection_statuses_v3', JSON.stringify(inspectionStatuses));
+            showToast('บันทึกสถานะการตรวจรับพัสดุเรียบร้อย', 'success');
+        }
+
+        function renderDashboardPhases() {
+            let completedCount = 0;
+            phaseStatuses.forEach((completed, idx) => {
+                const btn = document.getElementById(`p${idx+1}-btn`);
+                const statusText = document.getElementById(`p${idx+1}-status-text`);
+                const inspectCheckbox = document.getElementById(`inspect-p${idx+1}`);
+
+                inspectCheckbox.checked = inspectionStatuses[idx];
+                if (currentUserRole !== 'owner') {
+                    inspectCheckbox.disabled = true;
+                    inspectCheckbox.title = "เฉพาะเจ้าของแอปเท่านั้นที่ติ๊กได้";
+                } else {
+                    inspectCheckbox.disabled = false;
+                }
+
+                if (completed) {
+                    completedCount++;
+                    btn.className = "px-3 py-1.5 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 transition text-xs";
+                    btn.innerText = "ยกเลิกเสร็จ";
+                    statusText.innerText = "สถานะ: เสร็จสิ้น";
+                    statusText.className = "font-bold text-emerald-600 text-xs";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg bg-gray-200 text-gray-700 font-bold hover:bg-brand-600 hover:text-white transition text-xs";
+                    btn.innerText = "เสร็จงวดนี้";
+                    statusText.innerText = "สถานะ: รอดำเนินการ";
+                    statusText.className = "font-medium text-gray-500 text-xs";
+                }
+            });
+
+            document.getElementById('phaseCompletedCount').innerText = `เสร็จสิ้น ${completedCount} / 4 งวด`;
+            const overallPct = Math.round((completedCount / 4) * 100);
+            document.getElementById('dashOverallPercent').innerText = `${overallPct}%`;
+        }
+
+        function handleReportSubmit(e) {
+            e.preventDefault();
+
+            const checkboxes = document.querySelectorAll('input[name="subtask"]:checked');
+            let subtasksArr = [];
+            checkboxes.forEach(cb => subtasksArr.push(cb.value));
+
+            const newReport = {
+                id: Date.now(),
+                date: document.getElementById('reportDate').value,
+                supervisor: currentSupervisor,
+                phase: document.getElementById('reportPhase').value,
+                subtasks: subtasksArr,
+                summary: document.getElementById('reportSummary').value,
+                issues: document.getElementById('reportIssues').value,
+                nextPlan: document.getElementById('reportNextPlan').value,
+                image: uploadedImageBase64
+            };
+
+            dailyReports.unshift(newReport);
+            localStorage.setItem('kb_daily_reports_v3', JSON.stringify(dailyReports));
+
+            document.getElementById('reportForm').reset();
+            document.getElementById('reportDate').valueAsDate = new Date();
+            removeImage();
+            updateDynamicSubtasks();
+
+            renderHistory();
+            renderAutoSummary();
+            showToast('บันทึกรายงานประจำวันสำเร็จ', 'success');
+            switchTab('history');
+        }
+
+        function renderAutoSummary() {
+            const weeklyContainer = document.getElementById('weeklySummaryContent');
+            const monthlyContainer = document.getElementById('monthlySummaryContent');
+
+            if (dailyReports.length === 0) {
+                weeklyContainer.innerHTML = `<span class="text-gray-400">ยังไม่มีข้อมูลรายงานประจำวันสำหรับสรุปผล</span>`;
+                monthlyContainer.innerHTML = `<span class="text-gray-400">ยังไม่มีข้อมูลรายงานประจำวันสำหรับสรุปผล</span>`;
+                return;
+            }
+
+            let totalReports = dailyReports.length;
+            let supervisorsSet = [...new Set(dailyReports.map(r => r.supervisor))].join(', ');
+            let allSubtasks = dailyReports.flatMap(r => r.subtasks);
+            let uniqueSubtasks = [...new Set(allSubtasks)];
+
+            weeklyContainer.innerHTML = `
+                <div class="space-y-2">
+                    <div><strong class="text-emerald-900">จำนวนรายงานสะสม:</strong> ${totalReports} ฉบับ</div>
+                    <div><strong class="text-emerald-900">ผู้ปฏิบัติงาน:</strong> ${supervisorsSet}</div>
+                    <div><strong class="text-emerald-900">หมวดงานย่อยที่ทำไปแล้ว:</strong> ${uniqueSubtasks.length > 0 ? uniqueSubtasks.join(', ') : '-'}</div>
+                    <div class="pt-2 border-t border-emerald-100">
+                        <strong class="text-emerald-900 block mb-1">สรุปผลงานสัปดาห์นี้:</strong>
+                        <p class="text-gray-700 bg-white p-2.5 rounded-lg border border-emerald-100">
+                            การดำเนินงานในรอบสัปดาห์ที่ผ่านมารวม ${totalReports} วัน ผู้ควบคุมงานได้เข้าปฏิบัติงานและขับเคลื่อนงานตามแผนสัญญาเลขที่ 183/2569 งานมีความคืบหน้าต่อเนื่องตามขั้นตอนที่กำหนด ไม่มีปัญหาอุปสรรคร้ายแรง
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            monthlyContainer.innerHTML = `
+                <div class="space-y-2">
+                    <div><strong class="text-blue-900">โครงการ:</strong> งานจ้างปรับปรุงบ้านพักข้าราชการ ระดับ 1-2 ศบ.6 อุบลฯ</div>
+                    <div><strong class="text-blue-900">สถานะภาพรวม:</strong> ดำเนินการไปแล้ว ${totalReports} บันทึกรายงานประจำวัน</div>
+                    <div><strong class="text-blue-900">สรุปความก้าวหน้าประจำเดือน:</strong> ผลงานภาพรวมเป็นไปตามแผนงานสัญญาจ้าง 120 วัน การเบิกจ่ายงวดงานและการปฏิบัติงานหน้างานมีความเรียบร้อย คณะกรรมการและผู้ควบคุมงานปฏิบัติงานตามขั้นตอนอย่างเคร่งครัด</div>
+                </div>
+            `;
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if (dailyReports.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">ยังไม่มีประวัติรายงานประจำวัน</div>`;
+                return;
+            }
+
+            container.innerHTML = dailyReports.map(rep => `
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-gray-200 gap-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-brand-100 text-brand-800 text-xs px-2.5 py-1 rounded-md font-bold">รายงานประจำวัน</span>
+                            <span class="text-xs text-gray-500"><i class="fa-regular fa-calendar mr-1"></i>${rep.date}</span>
+                        </div>
+                        <div class="text-xs text-gray-600 font-medium">
+                            <i class="fa-solid fa-user-tie text-brand-600 mr-1"></i>${rep.supervisor}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs font-bold text-gray-700">งวดงาน:</div>
+                        <div class="text-xs text-gray-800">${rep.phase}</div>
+                    </div>
+
+                    ${rep.subtasks && rep.subtasks.length > 0 ? `
+                        <div>
+                            <div class="text-xs font-bold text-gray-700">งานย่อยที่ทำ:</div>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                ${rep.subtasks.map(st => `<span class="bg-blue-50 text-blue-700 text-[10px] px-2 py-0.5 rounded border border-blue-200">${st}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div>
+                        <div class="text-xs font-bold text-gray-700">ผลการปฏิบัติงาน:</div>
+                        <div class="text-xs text-gray-600 bg-white p-2.5 rounded-lg border border-gray-100">${rep.summary}</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <div class="bg-white p-2 rounded-lg border border-gray-100">
+                            <span class="font-bold text-gray-700">ปัญหา:</span> <span class="text-gray-600">${rep.issues}</span>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-gray-100">
+                            <span class="font-bold text-gray-700">แผนวันถัดไป:</span> <span class="text-gray-600">${rep.nextPlan}</span>
+                        </div>
+                    </div>
+
+                    ${rep.image ? `
+                        <div class="mt-2">
+                            <img src="${rep.image}" class="w-full h-36 object-cover rounded-lg border border-gray-200 shadow-sm" alt="Site photo">
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function exportToExcel() {
+            let csvContent = "\uFEFF";
+            csvContent += "=== รายงานประจำวันโครงการปรับปรุงบ้านพักข้าราชการ (สัญญา 183/2569) ===\n";
+            csvContent += "วันที่,ผู้บันทึก,งวดงาน,งานย่อยที่ปฏิบัติ,สรุปผลการปฏิบัติงาน,ปัญหาอุปสรรค,แผนงานวันถัดไป\n";
+
+            dailyReports.forEach(r => {
+                let subtasksStr = r.subtasks ? r.subtasks.join('; ') : '';
+                csvContent += `${r.date},"${r.supervisor}","${r.phase}","${subtasksStr}","${r.summary.replace(/"/g, '""')}","${r.issues.replace(/"/g, '""')}","${r.nextPlan.replace(/"/g, '""')}"\n`;
+            });
+
+            const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Daily_Reports_Contract_183_2569_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast('ส่งออกไฟล์ Excel สำเร็จ', 'success');
+        }
+
+        function exportToPowerPoint() {
+            try {
+                let pptx = new PptxGenJS();
+                pptx.layout = 'LAYOUT_16x9';
+
+                let slide1 = pptx.addSlide();
+                slide1.background = { color: '166534' };
+                slide1.addText("รายงานความก้าวหน้าโครงการก่อสร้าง", { x: 0.8, y: 1.5, fontSize: 28, color: 'FFFFFF', bold: true });
+                slide1.addText("สัญญาเลขที่ 183/2569 (ลงวันที่ 21 ตุลาคม 2569)\nศูนย์บริการวิชาการที่ 6 (จังหวัดอุบลราชธานี)", { x: 0.8, y: 2.6, fontSize: 16, color: 'DCFCE7' });
+                slide1.addText("งบประมาณ 490,000 บาท | ระยะเวลา 120 วัน", { x: 0.8, y: 4.2, fontSize: 12, color: 'FFFFFF' });
+
+                let slide2 = pptx.addSlide();
+                slide2.background = { color: 'F8FAFC' };
+                slide2.addText("สรุปภาพรวมและผลการปฏิบัติงานประจำวัน", { x: 0.8, y: 0.5, fontSize: 22, color: '166534', bold: true });
+                
+                let summaryText = `โครงการ: งานจ้างปรับปรุงบ้านพักข้าราชการ ระดับ 1-2 (บ้านแฝด 1 หลัง)\n`;
+                summaryText += `จำนวนบันทึกรายงานประจำวันทั้งหมด: ${dailyReports.length} ฉบับ\n`;
+                summaryText += `ผู้ควบคุมงาน: นายสมโชค สมวงค์ และ นายเกียรติศักดิ์ ศรีทับทิม\n`;
+                summaryText += `สถานะภาพรวม: การดำเนินงานเป็นไปตามแผนงานสัญญาจ้าง ไม่มีอุปสรรคร้ายแรง`;
+
+                slide2.addText(summaryText, { x: 0.8, y: 1.5, w: 10, h: 3, fontSize: 14, color: '334155', fill: { color: 'FFFFFF' } });
+
+                let slide3 = pptx.addSlide();
+                slide3.background = { color: 'F8FAFC' };
+                slide3.addText("รายการรายงานประจำวันล่าสุด", { x: 0.8, y: 0.5, fontSize: 22, color: '166534', bold: true });
+
+                let yPos = 1.3;
+                dailyReports.slice(0, 3).forEach((rep, idx) => {
+                    slide3.addText(`[${rep.date}] โดย ${rep.supervisor} (${rep.phase})`, { x: 0.8, y: yPos, fontSize: 12, bold: true, color: '0F172A' });
+                    slide3.addText(`• ผลงาน: ${rep.summary}`, { x: 1.0, y: yPos + 0.3, fontSize: 10, color: '475569', w: 10, h: 0.6 });
+                    yPos += 1.1;
+                });
+
+                pptx.writeFile({ fileName: `Construction_Report_Contract_183_2569_${new Date().toISOString().slice(0,10)}.pptx` });
+                showToast('สร้างและดาวน์โหลดไฟล์ PowerPoint สำเร็จ', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('เกิดข้อผิดพลาดในการสร้าง PowerPoint', 'error');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
